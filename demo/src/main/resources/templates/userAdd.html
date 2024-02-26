@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Add</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+    <link rel="stylesheet" href="/css/main.css" />
+</head>
+<body>
+    <!-- Include the Thymeleaf fragment -->
+    <div th:replace="layout/_layout :: header"></div>
+    <div th:fragment="content">
+        <section >
+            <div class="container mb-5 mt-5 py-5 h-100">
+              <div class="row d-flex justify-content-center align-items-center h-100">
+                <div class="col-8" >
+                  <div class="card shadow-2-strong" style="border-radius: 1rem;">
+                    <div class="card-body p-5" style="background-color:#f6f8ff;border-color: #f6f8ff;">
+          
+                        <h4 class="mb-5" id="textAdd" style="display: block;">เพิ่มผู้ใช้งาน</h4>
+                        <h4 class="mb-5" id="textUpdate" style="display: none;"> แก้ไขผู้ใช้งาน</h4>
+        
+                        <div class="form-inline"
+                            style="align-items: normal;flex-direction: column;"
+                        >
+
+                        <div class="form-group row pb-3">
+                            <label for="email" class="col-3 col-form-label">Email</label>
+                            <div class="col-9">
+                                <input type="email" class="form-control form-control-lg" style="border-color: #D8D8D8;" placeholder="Email" name="email" id="email" />
+                            </div>
+                        </div>
+          
+                        <div class="form-group row pb-3">
+                            <label for="username" class="col-3 col-form-label">Username</label>
+                            <div class="col-9">
+                                <input type="text" class="form-control form-control-lg" style="border-color: #D8D8D8;" placeholder="Username" name="username" id="UserUsername"  />
+                            </div>
+                        </div>
+            
+                        <div class="form-group row pb-3">
+                            <label for="password" class="col-3 col-form-label">Password</label>
+                            <div class="col-9">
+                                <input type="password" class="form-control form-control-lg" style="border-color: #D8D8D8;" placeholder="Password" name="password" id="password"  />
+                            </div>
+                        </div>
+
+                        <div class="form-group row pb-3">
+                            <label for="roleSelect" class="col-3 col-form-label">Role</label>
+                            <div class="col-9">
+                                <select id="roleSelect" class="form-control form-control-lg" style="width: 57% !important;"></select>
+                            </div>
+                        </div>
+
+                        <div style="display: flex;flex-direction: row;flex-wrap: nowrap;align-content: center;justify-content: center;align-items: baseline;">
+                            <a class="btn btn-primary btn-lg btn-block mr-4" 
+                                style="background-color: white;border-color: #091F5B;color: #000;" 
+                                type="button"
+                                onclick="clickBack()"
+                            >
+                                ยกเลิก
+                            </a>
+
+                            <button class="btn btn-primary btn-lg btn-block ml-4" 
+                                id="btnSave"
+                                style="display: block;  background-color: #091F5B;border-color: #091F5B;" 
+                                onclick="clickSave()"
+                            >
+                                บันทึก
+                            </button>
+                            <button class="btn btn-primary btn-lg btn-block ml-4" 
+                                id="btnUpdate"
+                                style="display: none; background-color: #091F5B;border-color: #091F5B;" 
+                                onclick="clickUpdate()"
+                            >
+                                บันทึก
+                            </button>
+                        </div>  
+
+                      </div>        
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+        </section>
+    </div>
+    <!-- Your specific page content goes here -->
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+    <script src="/js/main.js"></script>
+    <script>
+
+        // Function to retrieve the 'id' parameter from the URL
+        function getParameterByName(name) {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get(name);
+        }
+
+        // Fetch user data based on the 'id' parameter
+        const userId = getParameterByName('id');
+        
+        const usernameInput = document.getElementById('UserUsername');
+        const passwordInput = document.getElementById('password');
+        const emailInput = document.getElementById('email');
+        const roleInput = document.getElementById('roleSelect');
+
+        if (userId) {
+            const textAdd = document.getElementById('textAdd');
+            const textUpdate = document.getElementById('textUpdate');
+            const btnSave = document.getElementById('btnSave');
+            const btnUpdate = document.getElementById('btnUpdate');
+
+            textAdd.style.display = 'none';   // Hide the content
+            textUpdate.style.display = 'block';  // Show the content
+
+            btnSave.style.display = 'none';   // Hide the content
+            btnUpdate.style.display = 'block';  // Show the content
+            
+            
+            const apiUrl = `http://localhost:8080/api/users/${userId}`;
+            
+            fetch(apiUrl)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(userData => {
+                    // Display user details on the page
+                    usernameInput.value = userData.username;
+                    passwordInput.value = userData.password;
+                    emailInput.value = userData.email;
+
+                    fetch('/api/role')
+                    .then(response => response.json())
+                    .then(data => {
+                        const select = document.querySelector('#roleSelect');
+                        data.forEach((item, index )=> {
+                            const option = document.createElement('option');
+                            option.value = item.id; // Set the value attribute based on your data structure
+                            option.text = item.roleName;
+                            if (item.id === Number(userData.roleId)) {
+                                console.log("true",item)
+                                option.selected = true;
+                            }
+                            console.log("false",item)
+                            select.appendChild(option);
+                        });
+                    })
+                    .catch(error => console.error('Error fetching data:', error));
+
+                    // for (let i = 0; i < roleInput.options.length; i++) {
+                    //     if (roleInput.options[i].value === userData.roleId) {
+                    //         roleInput.options[i].selected = true;
+                    //     }
+                    // }   
+
+                })
+                .catch(error => {
+                    console.error('There was a problem with the fetch operation:', error);
+                });
+        } else {
+            console.error('No user ID found in the URL');
+            fetch('/api/role')
+            .then(response => response.json())
+            .then(data => {
+                const select = document.querySelector('#roleSelect');
+                    data.forEach((item, index )=> {
+                        const option = document.createElement('option');
+                        option.value = item.id; // Set the value attribute based on your data structure
+                        option.text = item.roleName;
+                        select.appendChild(option);
+                    });
+            })
+            .catch(error => console.error('Error fetching data:', error));
+        }
+
+        function clickBack(){
+            window.location.href = `/user/list`;
+        }
+
+        function clickUpdate(){
+            const updatedUserData = {
+                username: usernameInput.value,
+                password: passwordInput.value,
+                email: emailInput.value,
+                roleId:roleInput.value,
+                // Add other properties you want to update
+            };
+            updateDataById(userId,updatedUserData);
+        }
+
+        function updateDataById(id, data) {
+            const apiUrl = `/api/users/update/${id}`;
+
+            fetch(apiUrl, {
+                method: 'PUT', // or 'PATCH' depending on your API
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+            });      
+            window.location.href = `/user/list`;
+
+        }
+
+        function clickSave(){
+            const inputUserData = {
+                username: usernameInput.value,
+                password: passwordInput.value,
+                email: emailInput.value,
+                roleId:roleInput.value,
+                // Add other properties you want to update
+            };
+            save(inputUserData);
+        }
+
+        function save(data) {
+            const apiUrl = `/api/users/add`;
+            fetch (apiUrl, {
+                method: 'POST', // or 'PATCH' depending on your API
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+            })
+            .then(saveData => {
+                window.location.href = `/user/list`;
+                console.log('Data updated successfully:', saveData);
+            })
+            .catch(error => {
+                console.error('There was a problem with the fetch operation:', error);
+            });
+        }
+  
+    </script>
+    
+</body>
+</html>

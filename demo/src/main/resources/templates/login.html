@@ -1,0 +1,148 @@
+
+<html  lang="en" 
+  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+  layout:decorate="_layout"> 
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+    <link rel="stylesheet" href="/css/main.css" />
+
+    <title>Web Project</title>
+  </head>
+  <body style="background-color: #17327E;">
+    <!-- <h1>LOGIN</h1>
+    <p>Message from the server: <span th:text="${message}"></span></p> -->
+
+    <!-- NavBar https://getbootstrap.com/docs/4.5/components/navbar/ -->
+    <!-- <nav class="navbar navbar-dark bg-dark">
+      <a class="navbar-brand" href="">
+        <img src="/resources/images/logo.png" width="50" height="30" class="d-inline-block align-top" alt="">
+        Zlabs
+      </a>
+    </nav> -->
+
+
+    <!-- <div class="container" style="text-align: -webkit-center;">
+      <div class="row">
+
+        </div>
+        <div class="col-6" >
+          <form action="" method="post">
+                <h1>LOGIN</h1>
+                <div class="form-group">
+                  <input type="text" class="form-control" aria-describedby="basic-addon1"  name="username" placeholder="username" required >
+                </div>
+                <div class="form-group">
+                  <input type="password" class="form-control" id="exampleInputPassword1" name="password" placeholder="password" required >
+                </div>
+                <button style="width: -webkit-fill-available;" type="submit" class="btn btn-primary">Submit</button>
+              </form>
+        </div>
+        <div class="col">
+
+        </div>
+      </div>
+    </div> -->
+
+    <section class="vh-100">
+      <div class="container py-5 h-100">
+        <div class="row d-flex justify-content-center align-items-center h-100">
+          <div class="col-12 col-md-8 col-lg-6 col-xl-5">
+            <div class="card shadow-2-strong" style="border-radius: 1rem;">
+              <div class="card-body p-5 text-center">
+    
+                <h3 class="mb-5">เข้าสู่ระบบ</h3>
+
+                <!-- <form 
+                  id="loginForm"
+                > -->
+    
+                  <div class="form-outline mb-4">
+                    <input type="text" style="background-color:#f6f8ff;border-color: #f6f8ff;" placeholder="Username" name="username" id="username" class="form-control form-control-lg" />
+                  </div>
+      
+                  <div class="form-outline mb-4">
+                    <input type="password" style="background-color:#f6f8ff;border-color: #f6f8ff;" placeholder="Password" name="password" id="password" class="form-control form-control-lg" />
+                  </div>
+      
+                  <button class="btn btn-primary btn-lg btn-block" 
+                    style="background-color: #091F5B;border-color: #091F5B;" 
+                    onclick="login()"
+                  >
+                    เข้าสู่ระบบ
+                  </button>
+                  <button class="btn btn-primary btn-lg btn-block" 
+                    style="background-color: #556ba8;border-color: #556ba8;" 
+                    onclick="register()"
+                  >
+                    ลงทะเบียน
+                  </button>
+                <!-- </form> -->
+  
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+    <!-- <script src="/resources/js/bootstrap.min.js"></script> -->
+
+    <script>
+      function login() {
+        // ดึงข้อมูลจากฟอร์ม
+        var username = document.getElementById("username").value;
+        var password = document.getElementById("password").value;
+
+        // สร้าง JSON object สำหรับส่งไปยัง API
+        var data = {
+            username: username,
+            password: password
+        };
+
+        // ใช้ Fetch API เรียก API Login
+        fetch('http://localhost:8080/api/users/login', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        })
+        .then(response => {
+          console.log("response ",response);
+
+          if (!response.ok) {
+            throw new Error('Network response was not ok');
+          }
+          return response.json();
+
+        })
+        .then(dataLogin => {
+          console.log(dataLogin);
+          if(dataLogin.id == null){
+            return window.location.href = `/login`;
+          }else{
+            localStorage.clear();
+            localStorage.setItem('username', dataLogin.username);
+            localStorage.setItem('roleId', dataLogin.roleId);
+            return window.location.href = `/student/list`;
+          }
+        })
+      }
+
+      function register() {
+        window.location.href = `/register`
+      }
+    </script>
+    </body>
+</html>

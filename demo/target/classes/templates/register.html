@@ -1,0 +1,110 @@
+
+<html  lang="en" 
+  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+  layout:decorate="_layout"> 
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+    <link rel="stylesheet" href="/css/main.css" />
+
+    <title>Register</title>
+  </head>
+  <body style="background-color: #17327E;">
+    <section class="vh-100">
+      <div class="container py-5 h-100">
+        <div class="row d-flex justify-content-center align-items-center h-100">
+          <div class="col-12 col-md-8 col-lg-6 col-xl-5">
+            <div class="card shadow-2-strong" style="border-radius: 1rem;">
+              <div class="card-body p-5 text-center">
+    
+                <h3 class="mb-5">ลงทะเบียน</h3>
+                  <div class="form-outline mb-4">
+                    <input type="email" style="background-color:#f6f8ff;border-color: #f6f8ff;" placeholder="Email" name="email" id="email" class="form-control form-control-lg" />
+                  </div>
+                  
+                  <div class="form-outline mb-4">
+                    <input type="text" style="background-color:#f6f8ff;border-color: #f6f8ff;" placeholder="Username" name="username" id="UserUsername" class="form-control form-control-lg" />
+                  </div>
+      
+                  <div class="form-outline mb-4">
+                    <input type="password" style="background-color:#f6f8ff;border-color: #f6f8ff;" placeholder="Password" name="password" id="password" class="form-control form-control-lg" />
+                  </div>
+      
+                  <button class="btn btn-primary btn-lg btn-block" 
+                    style="background-color: #091F5B;border-color: #091F5B;" 
+                    onclick="clickRegister()"
+                  >
+                    บันทึก
+                  </button>
+                  <button class="btn btn-primary btn-lg btn-block" 
+                  style="background-color: white;border-color: #091F5B;color: #000;" 
+                    onclick="clickBack()"
+                  >
+                    ยกเลิก
+                  </button>
+
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+    <!-- <script src="/resources/js/bootstrap.min.js"></script> -->
+
+    <script>
+
+      const usernameInput = document.getElementById('UserUsername');
+      const passwordInput = document.getElementById('password');
+      const emailInput = document.getElementById('email');
+
+      function clickBack() {
+        window.location.href = `/login`
+      }
+
+      function clickRegister(){
+            const inputUserData = {
+                username: usernameInput.value,
+                password: passwordInput.value,
+                email: emailInput.value,
+                roleId: 3,
+                // Add other properties you want to update
+            };
+            save(inputUserData);
+        }
+
+        function save(data) {
+            const apiUrl = `/api/users/add`;
+            fetch (apiUrl, {
+                method: 'POST', // or 'PATCH' depending on your API
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+            })
+            .then(saveData => {
+                window.location.href = `/login`;
+                console.log('Data updated successfully:', saveData);
+            })
+            .catch(error => {
+                console.error('There was a problem with the fetch operation:', error);
+            });
+          }
+    </script>
+    </body>
+</html>
